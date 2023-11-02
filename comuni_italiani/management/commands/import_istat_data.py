@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from utils.italian_localization import get_comuni_italiani
+from comuni_italiani.utils.italian_localization import get_comuni_italiani
 from comuni_italiani.models import Regione, Provincia, Comune
 
 
