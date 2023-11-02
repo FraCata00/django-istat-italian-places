@@ -1,0 +1,40 @@
+from rest_framework import serializers
+
+
+class DynamicFieldsModelSerializer(serializers.ModelSerializer):
+    """
+    A ModelSerializer that takes an additional `fields` argument that
+    controls which fields should be displayed.
+
+    `Example usage`:
+
+    ```python
+    class TagSerializer((DynamicFieldsModelSerializer):
+        class Meta:
+            model = Tag
+            fields = "__all__"
+
+    class MySerializer(DynamicFieldsModelSerializer):
+        tags = TagSerializer(many=True, fields=['id', 'name'])
+
+        class Meta:
+            model = MyModel
+            fields = "__all__"
+    ```
+
+    In the example above, the `tags` field will only contain `id` and `name` fields instead of all the fields of the Tag model.
+    """
+
+    def __init__(self, *args, **kwargs):
+        # Don't pass the 'fields' arg up to the superclass
+        fields = kwargs.pop("fields", None)
+
+        # Instantiate the superclass normally
+        super().__init__(*args, **kwargs)
+
+        if fields is not None:
+            # Drop any fields that are not specified in the `fields` argument.
+            allowed = set(fields)
+            existing = set(self.fields)
+            for field_name in existing - allowed:
+                self.fields.pop(field_name)
