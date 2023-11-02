@@ -115,7 +115,7 @@ class Provincia(models.Model):
         return f"Provincia: {self.denomination}"
 
 
-class Comune(models.Models):
+class Comune(models.Model):
     data = models.JSONField(default=dict)
 
     province = models.ForeignKey(
