@@ -1,0 +1,5 @@
+include LICENSE
+include README.rst
+recursive-include comuni_italiani/static *
+recursive-include comuni_italiani/templates *
+recursive-include docs *
