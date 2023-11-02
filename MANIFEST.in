@@ -5,3 +5,4 @@ recursive-include comuni_italiani/templates *
 recursive-include docs *
 recursive-exclude comuni_italiani/management *
 recursive-include comuni_italiani/management/commands *
+recursive-exclude comuni_italiani/utils *
