@@ -34,7 +34,7 @@ Quick start
 
     (If use the --force option, the command start without asking for confirmation)
 
-6. Visit http://127.0.0.1:8000/comuni_italiani/ to view the API index.
+6. Visit http://127.0.0.1:8000/comuni-italiani/ to view the API index.
 
 7. Visit http://127.0.0.1:8000/comuni-italiani/regioni/ to view the API regioni.
 
