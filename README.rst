@@ -1,6 +1,6 @@
-=============================
-Django ISTAT API localization
-=============================
+===============================
+Django ISTAT API italian places
+===============================
 
 Django ISTAT is a Django app to localize the ISTAT API.
 The result is a Django app that you can plug into your existing Django project to localize the ISTAT API.
