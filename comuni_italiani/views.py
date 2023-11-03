@@ -1,13 +1,14 @@
-from rest_framework import permissions
+from rest_framework import permissions, viewsets
 from rest_framework.generics import ListAPIView, RetrieveAPIView
+
+from comuni_italiani.filters import ComuneFilters, ProvinciaFilters, RegioneFilters
+from comuni_italiani.models import Comune, Provincia, Regione
 from comuni_italiani.serializers import (
-    RegioneSerializer,
-    ProvinciaSerializer,
-    ProvinciaRetrieveSerializer,
     ComuneSerializer,
+    ProvinciaRetrieveSerializer,
+    ProvinciaSerializer,
+    RegioneSerializer,
 )
-from rest_framework import viewsets
-from comuni_italiani.models import Regione, Provincia, Comune
 
 
 class RegioniAPIView(viewsets.GenericViewSet, ListAPIView, RetrieveAPIView):
@@ -23,6 +24,7 @@ class RegioniAPIView(viewsets.GenericViewSet, ListAPIView, RetrieveAPIView):
         "geographic_partition",
         "code",
     ]
+    filterset_class = RegioneFilters
 
 
 class ProvinciaAPIView(viewsets.GenericViewSet, ListAPIView, RetrieveAPIView):
@@ -42,6 +44,7 @@ class ProvinciaAPIView(viewsets.GenericViewSet, ListAPIView, RetrieveAPIView):
         "region__denomination",
         "region__code",
     ]
+    filterset_class = ProvinciaFilters
 
     def get_serializer_class(self):
         if self.action == "retrieve":
@@ -65,3 +68,4 @@ class ComuneAPIView(viewsets.GenericViewSet, ListAPIView, RetrieveAPIView):
         "province__denomination",
         "province__code",
     ]
+    filterset_class = ComuneFilters
