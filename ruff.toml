@@ -1,0 +1,6 @@
+select = ["E", "F", "I001"]
+exclude = ["**/migrations"]
+
+[per-file-ignores]
+"**/settings/*.py" = ["E501"]
+"comuni_italiani/tests/**/*.py" = ["F811"]
