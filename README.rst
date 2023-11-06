@@ -19,6 +19,9 @@
 .. image:: https://img.shields.io/github/issues-pr/FraCata00/django-istat-italian-places
    :alt: GitHub pull requests
 
+.. image:: https://github.com/FraCata00/django-istat-italian-places/workflows/CodeQL/badge.svg
+  :alt: https://github.com/FraCata00/django-istat-italian-places/actions?query=workflow%3ACodeQL
+
 ===============================
 Django ISTAT API italian places
 ===============================
