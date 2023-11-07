@@ -65,7 +65,5 @@ class ComuneAPIView(viewsets.GenericViewSet, ListAPIView, RetrieveAPIView):
         "geographic_partition",
         "code",
         "progressive",
-        "province__denomination",
-        "province__code",
     ]
     filterset_class = ComuneFilters
