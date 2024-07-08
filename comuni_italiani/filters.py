@@ -62,6 +62,10 @@ class ComuneFilters(filters.FilterSet):
         field_name="province",
         lookup_expr="in",
     )
+    province_denomination = filters.BaseInFilter(
+        field_name="province__denomination",
+        lookup_expr="in",
+    )
     progressive = filters.NumberFilter()
 
     class Meta:

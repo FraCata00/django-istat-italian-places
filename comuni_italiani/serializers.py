@@ -1,8 +1,9 @@
 import logging
-from rest_framework import serializers
-from utils.dynamic_field_serializers import DynamicFieldsModelSerializer
 
-from comuni_italiani.models import Regione, Provincia, Comune
+from rest_framework import serializers
+
+from comuni_italiani.models import Comune, Provincia, Regione
+from comuni_italiani.utils.dynamic_field_serializers import DynamicFieldsModelSerializer
 
 logger = logging.getLogger(__name__)
 
