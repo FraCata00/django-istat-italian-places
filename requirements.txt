@@ -1,5 +1,5 @@
 asgiref==3.7.2
-Django==4.2.15
+Django==4.2.16
 django-filter==23.4
 djangorestframework==3.15.2
 Markdown==3.5.1
