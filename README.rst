@@ -1,23 +1,18 @@
 .. image:: https://img.shields.io/github/license/FraCata00/django-istat-italian-places
    :alt: GitHub
 
-.. image:: https://img.shields.io/github/languages/top/FraCata00/django-istat-italian-places
-   :alt: GitHub top language
-
-.. image:: https://img.shields.io/pypi/wheel/django-istat-italian-places
-   :alt: PyPI - Wheel
-
 .. image:: https://img.shields.io/github/v/release/FraCata00/django-istat-italian-places
    :alt: GitHub release (with filter)
+
+.. image:: https://deepwiki.com/badge.svg
+   :target: https://deepwiki.com/FraCata00/django-istat-italian-places
+   :alt: Ask DeepWiki
 
 .. image:: https://img.shields.io/github/actions/workflow/status/FraCata00/django-istat-italian-places/python-publish.yml
    :alt: GitHub Workflow Status (with event)
 
 .. image:: https://img.shields.io/github/issues/FraCata00/django-istat-italian-places
    :alt: GitHub issues
-
-.. image:: https://img.shields.io/github/issues-pr/FraCata00/django-istat-italian-places
-   :alt: GitHub pull requests
 
 .. image:: https://github.com/FraCata00/django-istat-italian-places/workflows/CodeQL/badge.svg
   :alt: https://github.com/FraCata00/django-istat-italian-places/actions?query=workflow%3ACodeQL
