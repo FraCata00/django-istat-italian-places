@@ -20,7 +20,7 @@ class RegioniAPIView(viewsets.GenericViewSet, ListAPIView, RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated]
     queryset = Regione.objects.all()
     search_fields = [
-        "denomination",
+        "^denomination",
         "geographic_partition",
         "code",
     ]
@@ -37,11 +37,11 @@ class ProvinciaAPIView(viewsets.GenericViewSet, ListAPIView, RetrieveAPIView):
         Provincia.objects.select_related("region").prefetch_related("cities").all()
     )
     search_fields = [
-        "denomination",
+        "^denomination",
         "geographic_partition",
         "code",
         "auto_code",
-        "region__denomination",
+        "^region__denomination",
         "region__code",
     ]
     filterset_class = ProvinciaFilters
@@ -61,7 +61,7 @@ class ComuneAPIView(viewsets.GenericViewSet, ListAPIView, RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated]
     queryset = Comune.objects.select_related("province").all()
     search_fields = [
-        "denomination",
+        "^denomination",
         "geographic_partition",
         "code",
         "progressive",
