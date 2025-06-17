@@ -1,5 +1,6 @@
-import os
 import csv
+import os
+
 import requests
 
 """
