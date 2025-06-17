@@ -1,5 +1,5 @@
-from rest_framework import permissions, viewsets
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.response import Response
+from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from comuni_italiani.filters import ComuneFilters, ProvinciaFilters, RegioneFilters
 from comuni_italiani.models import Comune, Provincia, Regione
@@ -11,39 +11,32 @@ from comuni_italiani.serializers import (
 )
 
 
-class RegioniAPIView(viewsets.GenericViewSet, ListAPIView, RetrieveAPIView):
+class RegioniAPIView(ReadOnlyModelViewSet):
     # TIPS:
     # - use select_related() for ForeignKey and OneToOneField
     # - use prefetch_related() for ManyToManyField and reverse ForeignKey
 
     serializer_class = RegioneSerializer
-    permission_classes = [permissions.IsAuthenticated]
     queryset = Regione.objects.all()
-    search_fields = [
-        "^denomination",
-        "geographic_partition",
-        "code",
-    ]
+    search_fields = ["denomination"]
     filterset_class = RegioneFilters
 
+    # remove pagination only after search
+    def get_paginated_response(self, data):
+        if self.request.query_params.get("search"):
+            return Response(data)
+        return super().get_paginated_response(data)
 
-class ProvinciaAPIView(viewsets.GenericViewSet, ListAPIView, RetrieveAPIView):
+
+class ProvinciaAPIView(ReadOnlyModelViewSet):
     # TIPS:
     # - use select_related() for ForeignKey and OneToOneField
     # - use prefetch_related() for ManyToManyField and reverse ForeignKey
 
-    permission_classes = [permissions.IsAuthenticated]
     queryset = (
         Provincia.objects.select_related("region").prefetch_related("cities").all()
     )
-    search_fields = [
-        "^denomination",
-        "geographic_partition",
-        "code",
-        "auto_code",
-        "^region__denomination",
-        "region__code",
-    ]
+    search_fields = ["denomination"]
     filterset_class = ProvinciaFilters
 
     def get_serializer_class(self):
@@ -51,19 +44,25 @@ class ProvinciaAPIView(viewsets.GenericViewSet, ListAPIView, RetrieveAPIView):
             return ProvinciaRetrieveSerializer
         return ProvinciaSerializer
 
+    # remove pagination only after search
+    def get_paginated_response(self, data):
+        if self.request.query_params.get("search"):
+            return Response(data)
+        return super().get_paginated_response(data)
 
-class ComuneAPIView(viewsets.GenericViewSet, ListAPIView, RetrieveAPIView):
+
+class ComuneAPIView(ReadOnlyModelViewSet):
     # TIPS:
     # - use select_related() for ForeignKey and OneToOneField
     # - use prefetch_related() for ManyToManyField and reverse ForeignKey
 
     serializer_class = ComuneSerializer
-    permission_classes = [permissions.IsAuthenticated]
     queryset = Comune.objects.select_related("province").all()
-    search_fields = [
-        "^denomination",
-        "geographic_partition",
-        "code",
-        "progressive",
-    ]
+    search_fields = ["denomination"]
     filterset_class = ComuneFilters
+
+    # remove pagination only after search
+    def get_paginated_response(self, data):
+        if self.request.query_params.get("search"):
+            return Response(data)
+        return super().get_paginated_response(data)

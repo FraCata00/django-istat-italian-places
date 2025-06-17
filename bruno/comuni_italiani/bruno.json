@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "comuni_italiani",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

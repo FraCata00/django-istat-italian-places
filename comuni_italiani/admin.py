@@ -1,5 +1,6 @@
 from django.contrib import admin
-from comuni_italiani.models import Regione, Provincia, Comune
+
+from comuni_italiani.models import Comune, Provincia, Regione
 
 
 @admin.register(Regione)
@@ -9,7 +10,7 @@ class RegioneAdmin(admin.ModelAdmin):
         "denomination",
         "geographic_partition",
     )
-    search_fields = ["code", "denomination", "geographic_partition"]
+    search_fields = ["code", "denomination"]
     list_filter = [
         "denomination",
         "geographic_partition",
@@ -38,11 +39,10 @@ class ProvinciaAdmin(admin.ModelAdmin):
     search_fields = [
         "code",
         "denomination",
-        "geographic_partition",
-        "region__denomination",
     ]
     list_filter = [
         "geographic_partition",
+        "region__denomination",
     ]
     fieldsets = [
         (
@@ -79,11 +79,11 @@ class ComuneAdmin(admin.ModelAdmin):
         "code",
         "denomination",
         "progressive",
-        "province__denomination",
-        "province__region__denomination",
     ]
     list_filter = [
         "geographic_partition",
+        "province__denomination",
+        "province__region__denomination",
     ]
     fieldsets = [
         (
