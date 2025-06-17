@@ -11,7 +11,21 @@ from comuni_italiani.serializers import (
 )
 
 
-class RegioniAPIView(ReadOnlyModelViewSet):
+# mixin
+class SearchableReadOnlyViewSet(ReadOnlyModelViewSet):
+    """
+    A viewset that provides default `list()` and `retrieve()` actions.
+    remove pagination only after search
+    """
+
+    # remove pagination only after search
+    def get_paginated_response(self, data):
+        if self.request.query_params.get("search"):
+            return Response(data)
+        return super().get_paginated_response(data)
+
+
+class RegioniAPIView(SearchableReadOnlyViewSet):
     # TIPS:
     # - use select_related() for ForeignKey and OneToOneField
     # - use prefetch_related() for ManyToManyField and reverse ForeignKey
@@ -21,14 +35,8 @@ class RegioniAPIView(ReadOnlyModelViewSet):
     search_fields = ["denomination"]
     filterset_class = RegioneFilters
 
-    # remove pagination only after search
-    def get_paginated_response(self, data):
-        if self.request.query_params.get("search"):
-            return Response(data)
-        return super().get_paginated_response(data)
 
-
-class ProvinciaAPIView(ReadOnlyModelViewSet):
+class ProvinciaAPIView(SearchableReadOnlyViewSet):
     # TIPS:
     # - use select_related() for ForeignKey and OneToOneField
     # - use prefetch_related() for ManyToManyField and reverse ForeignKey
@@ -44,14 +52,8 @@ class ProvinciaAPIView(ReadOnlyModelViewSet):
             return ProvinciaRetrieveSerializer
         return ProvinciaSerializer
 
-    # remove pagination only after search
-    def get_paginated_response(self, data):
-        if self.request.query_params.get("search"):
-            return Response(data)
-        return super().get_paginated_response(data)
 
-
-class ComuneAPIView(ReadOnlyModelViewSet):
+class ComuneAPIView(SearchableReadOnlyViewSet):
     # TIPS:
     # - use select_related() for ForeignKey and OneToOneField
     # - use prefetch_related() for ManyToManyField and reverse ForeignKey
@@ -60,9 +62,3 @@ class ComuneAPIView(ReadOnlyModelViewSet):
     queryset = Comune.objects.select_related("province").all()
     search_fields = ["denomination"]
     filterset_class = ComuneFilters
-
-    # remove pagination only after search
-    def get_paginated_response(self, data):
-        if self.request.query_params.get("search"):
-            return Response(data)
-        return super().get_paginated_response(data)
