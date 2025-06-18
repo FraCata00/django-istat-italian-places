@@ -1,4 +1,4 @@
-from rest_framework.response import Response
+from django.db.models.functions import Length
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from comuni_italiani.filters import ComuneFilters, ProvinciaFilters, RegioneFilters
@@ -11,21 +11,22 @@ from comuni_italiani.serializers import (
 )
 
 
-# mixin
-class SearchableReadOnlyViewSet(ReadOnlyModelViewSet):
+class LengthOfDenominationROMV(ReadOnlyModelViewSet):
     """
-    A viewset that provides default `list()` and `retrieve()` actions.
-    remove pagination only after search
+    Mixin to order the queryset by the length of the denomination field.
+    - only during the search
     """
 
-    # remove pagination only after search
-    def get_paginated_response(self, data):
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
         if self.request.query_params.get("search"):
-            return Response(data)
-        return super().get_paginated_response(data)
+            return queryset.order_by(Length("denomination"))
+        # if not searching, return the default queryset
+        return queryset
 
 
-class RegioniAPIView(SearchableReadOnlyViewSet):
+class RegioniAPIView(LengthOfDenominationROMV):
     # TIPS:
     # - use select_related() for ForeignKey and OneToOneField
     # - use prefetch_related() for ManyToManyField and reverse ForeignKey
@@ -36,7 +37,7 @@ class RegioniAPIView(SearchableReadOnlyViewSet):
     filterset_class = RegioneFilters
 
 
-class ProvinciaAPIView(SearchableReadOnlyViewSet):
+class ProvinciaAPIView(LengthOfDenominationROMV):
     # TIPS:
     # - use select_related() for ForeignKey and OneToOneField
     # - use prefetch_related() for ManyToManyField and reverse ForeignKey
@@ -53,7 +54,7 @@ class ProvinciaAPIView(SearchableReadOnlyViewSet):
         return ProvinciaSerializer
 
 
-class ComuneAPIView(SearchableReadOnlyViewSet):
+class ComuneAPIView(LengthOfDenominationROMV):
     # TIPS:
     # - use select_related() for ForeignKey and OneToOneField
     # - use prefetch_related() for ManyToManyField and reverse ForeignKey
