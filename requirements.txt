@@ -1,6 +1,6 @@
-asgiref==3.9.1
-Django==4.2.24
-django-filter==25.1
+asgiref==3.10.0
+Django==5.2.7
+django-filter==25.2
 djangorestframework==3.16.1
 Markdown==3.9
 pytz==2025.2
