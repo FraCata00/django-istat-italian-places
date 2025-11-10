@@ -1,8 +1,8 @@
-asgiref==3.9.1
-Django==4.2.24
-django-filter==25.1
+asgiref==3.10.0
+Django==5.2.8
+django-filter==25.2
 djangorestframework==3.16.1
-Markdown==3.9
+Markdown==3.10
 pytz==2025.2
 sqlparse==0.5.3
 typing_extensions==4.15.0
