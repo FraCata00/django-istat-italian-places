@@ -17,3 +17,8 @@ changelog:
         - fix
         - bugfix
         - fixes
+    - title: Refactoring
+      labels:
+        - refactor
+        - refactoring
+        - ref
