@@ -1,6 +1,3 @@
-.. image:: https://img.shields.io/github/license/FraCata00/django-istat-italian-places
-   :alt: GitHub
-
 .. image:: https://img.shields.io/github/v/release/FraCata00/django-istat-italian-places
    :alt: GitHub release (with filter)
 
