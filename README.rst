@@ -1,18 +1,24 @@
-.. image:: https://img.shields.io/github/v/release/FraCata00/django-istat-italian-places
-   :alt: GitHub release (with filter)
+|license| |release| |deepwiki| |build| |issues| |codeql|
 
-.. image:: https://deepwiki.com/badge.svg
+.. |license| image:: https://img.shields.io/github/license/FraCata00/django-istat-italian-places
+   :alt: License
+
+.. |release| image:: https://img.shields.io/github/v/release/FraCata00/django-istat-italian-places
+   :alt: GitHub release
+
+.. |deepwiki| image:: https://deepwiki.com/badge.svg
    :target: https://deepwiki.com/FraCata00/django-istat-italian-places
    :alt: Ask DeepWiki
 
-.. image:: https://img.shields.io/github/actions/workflow/status/FraCata00/django-istat-italian-places/python-publish.yml
-   :alt: GitHub Workflow Status (with event)
+.. |build| image:: https://img.shields.io/github/actions/workflow/status/FraCata00/django-istat-italian-places/python-publish.yml
+   :alt: Build status
 
-.. image:: https://img.shields.io/github/issues/FraCata00/django-istat-italian-places
+.. |issues| image:: https://img.shields.io/github/issues/FraCata00/django-istat-italian-places
    :alt: GitHub issues
 
-.. image:: https://github.com/FraCata00/django-istat-italian-places/workflows/CodeQL/badge.svg
-  :alt: https://github.com/FraCata00/django-istat-italian-places/actions?query=workflow%3ACodeQL
+.. |codeql| image:: https://github.com/FraCata00/django-istat-italian-places/workflows/CodeQL/badge.svg
+   :target: https://github.com/FraCata00/django-istat-italian-places/actions?query=workflow%3ACodeQL
+   :alt: CodeQL
 
 ===============================
 Django ISTAT API italian places
