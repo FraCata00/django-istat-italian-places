@@ -1,5 +1,5 @@
+from django.db import transaction
 from django.core.management.base import BaseCommand
-
 from comuni_italiani.models import Comune, Provincia, Regione
 from comuni_italiani.utils.italian_localization import get_comuni_italiani
 
@@ -7,123 +7,108 @@ from comuni_italiani.utils.italian_localization import get_comuni_italiani
 class Command(BaseCommand):
     help = "Import data from ISTAT"
 
-    # before launch this command, you need to specify y/N to continue
     def add_arguments(self, parser):
-        parser.add_argument(
-            "--force",
-            action="store_true",
-            help="Force import data from ISTAT",
-        )
-
-    def confirm(self, question):
-        try:
-            while True:
-                self.stdout.write(question)
-                choice = input().lower()
-
-                if choice in ["y", "yes"]:
-                    return True
-                elif choice in ["n", "no"]:
-                    return False
-                else:
-                    self.stdout.write(
-                        "Please respond with 'yes' or 'no' (or 'y' or 'n').\n"
-                    )
-        except KeyboardInterrupt:
-            self.stdout.write("\nOperation cancelled.", style_func=self.style.ERROR)
-            exit(1)
+        parser.add_argument("--force", action="store_true")
 
     def handle(self, *args, **options):
-        confirm_ = options["force"]
+        if not options["force"]:
+            self.stdout.write(self.style.WARNING("Are you sure? [y/N]: "))
+            if input().lower() not in ["y", "yes"]:
+                self.stdout.write(self.style.ERROR("Cancelled.")); return
 
-        if not confirm_:
-            confirm = self.confirm(
-                self.style.WARNING(
-                    "Are you sure you want to import data from ISTAT? [y/N]: "
-                )
-            )
-
-            if not confirm:
-                self.stdout.write(
-                    "Operation cancelled.",
-                    style_func=self.style.ERROR,
-                )
-                exit(1)
-            else:
-                self.stdout.write(
-                    "Operation confirmed.",
-                    style_func=self.style.SUCCESS,
-                )
-
-        self.stdout.write(
-            "Importing data from ISTAT",
-            style_func=self.style.WARNING,
-        )
+        self.stdout.write(self.style.WARNING("Downloading ISTAT data..."))
         data_istat = get_comuni_italiani()
+        total = len(data_istat)
+        self.stdout.write(self.style.SUCCESS(f"Parsed {total} records"))
 
-        self.stdout.write(
-            "Data downloaded successfully and parsed CSV file from ISTAT",
-            style_func=self.style.SUCCESS,
-        )
+        with transaction.atomic():
+            # --- Regions ---
+            regioni_map = {}
+            regioni_to_upsert = {}
+            for data in data_istat:
+                code = data["Codice Regione"]
+                if code not in regioni_to_upsert:
+                    regioni_to_upsert[code] = Regione(
+                        code=code,
+                        denomination=data["Denominazione Regione"],
+                        geographic_partition=data["Ripartizione geografica"],
+                        data=data,
+                    )
 
-        for i, data in enumerate(data_istat):
-            # now print the progress bar in the same line
-            self.stdout.write(
-                "Importing Progress: {}/{}".format(i + 1, len(data_istat)),
-                style_func=self.style.WARNING,
-                ending="\r",
-            )
-            self.stdout.flush()
+            existing_regioni = {r.code: r for r in Regione.objects.all()}
+            to_create, to_update = [], []
+            for code, obj in regioni_to_upsert.items():
+                if code in existing_regioni:
+                    existing = existing_regioni[code]
+                    existing.denomination = obj.denomination
+                    existing.geographic_partition = obj.geographic_partition
+                    existing.data = obj.data
+                    to_update.append(existing)
+                else:
+                    to_create.append(obj)
 
-            # intit to parse and create Region instances
-            region, _ = Regione.objects.update_or_create(
-                code=data["Codice Regione"],
-                defaults={
-                    "denomination": data["Denominazione Regione"],
-                    "geographic_partition": data["Ripartizione geografica"],
-                    "data": data,
-                },
-            )
+            Regione.objects.bulk_create(to_create, ignore_conflicts=False)
+            Regione.objects.bulk_update(to_update, ["denomination", "geographic_partition", "data"])
 
-            # init to parse and create Provincia instances
-            province, _ = Provincia.objects.update_or_create(
-                code=data["Codice Provincia (Storico)(1)"],
-                defaults={
-                    "denomination": data[
-                        "Denominazione dell'Unità territoriale sovracomunale \n(valida a fini statistici)"
-                    ],
-                    "geographic_partition": data["Ripartizione geografica"],
-                    "auto_code": data["Sigla automobilistica"],
-                    "data": data,
-                    "region": region,
-                },
-            )
+            regioni_map = {r.code: r for r in Regione.objects.all()}
+            self.stdout.write(self.style.SUCCESS(f"Regioni: {len(regioni_map)}"))
 
-            # init to parse and create Comune instances
-            Comune.objects.update_or_create(
-                code=data["Codice Comune formato alfanumerico"],
-                defaults={
-                    "progressive": data["Progressivo del Comune (2)"],
-                    "denomination": data["Denominazione in italiano"],
-                    "geographic_partition": data["Ripartizione geografica"],
-                    "data": data,
-                    "province": province,
-                },
-            )
+            # --- Provinces ---
+            province_map = {}
+            province_to_upsert = {}
+            for data in data_istat:
+                code = data["Codice Provincia (Storico)(1)"]
+                if code not in province_to_upsert:
+                    province_to_upsert[code] = dict(
+                        code=code,
+                        denomination=data["Denominazione dell'Unità territoriale sovracomunale \n(valida a fini statistici)"],
+                        geographic_partition=data["Ripartizione geografica"],
+                        auto_code=data["Sigla automobilistica"],
+                        data=data,
+                        region=regioni_map[data["Codice Regione"]],
+                    )
 
-        self.stdout.write(
-            "Data imported successfully",
-            style_func=self.style.SUCCESS,
-        )
-        self.stdout.write(
-            "Total Regions: {}".format(Regione.objects.count()),
-            style_func=self.style.SUCCESS,
-        )
-        self.stdout.write(
-            "Total Provinces: {}".format(Provincia.objects.count()),
-            style_func=self.style.SUCCESS,
-        )
-        self.stdout.write(
-            "Total Cities: {}".format(Comune.objects.count()),
-            style_func=self.style.SUCCESS,
-        )
+            existing_province = {p.code: p for p in Provincia.objects.all()}
+            to_create, to_update = [], []
+            for code, d in province_to_upsert.items():
+                if code in existing_province:
+                    p = existing_province[code]
+                    for k, v in d.items():
+                        setattr(p, k, v)
+                    to_update.append(p)
+                else:
+                    to_create.append(Provincia(**d))
+
+            Provincia.objects.bulk_create(to_create)
+            Provincia.objects.bulk_update(to_update, ["denomination", "geographic_partition", "auto_code", "data", "region"])
+
+            province_map = {p.code: p for p in Provincia.objects.all()}
+            self.stdout.write(self.style.SUCCESS(f"Province: {len(province_map)}"))
+
+            # --- Comuni ---
+            existing_comuni = {c.code: c for c in Comune.objects.all()}
+            to_create, to_update = [], []
+            for data in data_istat:
+                code = data["Codice Comune formato alfanumerico"]
+                obj_data = dict(
+                    code=code,
+                    progressive=data["Progressivo del Comune (2)"],
+                    denomination=data["Denominazione in italiano"],
+                    geographic_partition=data["Ripartizione geografica"],
+                    data=data,
+                    province=province_map[data["Codice Provincia (Storico)(1)"]],
+                )
+                if code in existing_comuni:
+                    c = existing_comuni[code]
+                    for k, v in obj_data.items():
+                        setattr(c, k, v)
+                    to_update.append(c)
+                else:
+                    to_create.append(Comune(**obj_data))
+
+            Comune.objects.bulk_create(to_create, batch_size=500)
+            Comune.objects.bulk_update(to_update, ["progressive", "denomination", "geographic_partition", "data", "province"], batch_size=500)
+
+            self.stdout.write(self.style.SUCCESS(f"Comuni creati: {len(to_create)}, aggiornati: {len(to_update)}"))
+
+        self.stdout.write(self.style.SUCCESS("Import completato."))
