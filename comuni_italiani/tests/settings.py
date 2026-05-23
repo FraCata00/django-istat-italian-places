@@ -6,13 +6,10 @@ SECRET_KEY = "django-admin-interface"
 
 ALLOWED_HOSTS = ["*"]
 
-# Application definition
 INSTALLED_APPS = [
     "comuni_italiani",
-]
-
-
-INSTALLED_APPS += [
+    "rest_framework",
+    "django_filters",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -21,10 +18,10 @@ INSTALLED_APPS += [
 ]
 
 MIDDLEWARE = [
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
 ]
 
 TEMPLATES = [
@@ -45,9 +42,24 @@ TEMPLATES = [
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": "db.sqlite3",
+        "NAME": ":memory:",
     }
 }
+
+ROOT_URLCONF = "comuni_italiani.tests.urls"
+
+REST_FRAMEWORK = {
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend",
+        "rest_framework.filters.SearchFilter",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [],
+    "DEFAULT_PERMISSION_CLASSES": [],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 20,
+}
+
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 USE_I18N = True
 LANGUAGE_CODE = "en"

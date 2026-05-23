@@ -1,13 +1,8 @@
 import pytest
 
-from comuni_italiani.models import Regione
+from comuni_italiani.tests.factories import RegioneFactory
 
 
 @pytest.fixture
-@pytest.mark.django_db
-def regione():
-    yield Regione.objects.create(
-        code="01",
-        denomination="Piemonte",
-        geographic_partition="Nord-Ovest",
-    )
+def regione(db):
+    yield RegioneFactory()

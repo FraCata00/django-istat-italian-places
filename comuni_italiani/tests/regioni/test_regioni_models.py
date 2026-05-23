@@ -1,8 +1,24 @@
 import pytest
-from tests.regioni.fixtures import regione  # noqa: F401
+from django.db import IntegrityError
+
+from comuni_italiani.tests.factories import RegioneFactory
 
 
-class TestRegioniModel:
-    @pytest.mark.django_db
-    def test_regioni_srt_ok(self, regione):
-        assert regione.__str__() == f"Regione: {regione.denomination}"  # noqa: F811
+@pytest.mark.django_db
+class TestRegioneModel:
+    def test_str(self, regione):
+        assert str(regione) == f"Regione: {regione.denomination}"
+
+    def test_code_is_unique(self, db):
+        RegioneFactory(code="01")
+        with pytest.raises(IntegrityError):
+            RegioneFactory(code="01")
+
+    def test_ordering_by_denomination(self, db):
+        RegioneFactory(denomination="Zeta")
+        RegioneFactory(denomination="Alpha")
+        RegioneFactory(denomination="Mela")
+        from comuni_italiani.models import Regione
+
+        denominations = list(Regione.objects.values_list("denomination", flat=True))
+        assert denominations == sorted(denominations)
