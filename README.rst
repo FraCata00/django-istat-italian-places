@@ -35,12 +35,23 @@ Detailed documentation is in the "docs" directory.
 Quick start
 -----------
 
-1. Add "comuni_italiani" to your INSTALLED_APPS setting like this::
+1. Add "comuni_italiani", "rest_framework" and "django_filters" to your INSTALLED_APPS setting like this::
 
     INSTALLED_APPS = [
         ...,
+        "rest_framework",
+        "django_filters",
         "comuni_italiani",
     ]
+
+   The API filters and ``?search=`` rely on the django-filter and DRF search backends::
+
+    REST_FRAMEWORK = {
+        "DEFAULT_FILTER_BACKENDS": [
+            "django_filters.rest_framework.DjangoFilterBackend",
+            "rest_framework.filters.SearchFilter",
+        ],
+    }
 
 2. Include the polls URLconf in your project urls.py like this::
 

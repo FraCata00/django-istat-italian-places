@@ -1,8 +1,2 @@
-include LICENSE
-include README.rst
-recursive-include comuni_italiani/static *
-recursive-include comuni_italiani/templates *
-recursive-include docs *
-recursive-exclude comuni_italiani/management *
-recursive-include comuni_italiani/management/commands *
-recursive-include comuni_italiani/utils *
+global-exclude *.py[cod]
+prune **/__pycache__
