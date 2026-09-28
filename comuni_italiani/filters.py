@@ -3,6 +3,12 @@ from django_filters import rest_framework as filters
 from comuni_italiani.models import Comune, Provincia, Regione
 
 
+class NumberInFilter(filters.BaseInFilter, filters.NumberFilter):
+    # comma-separated ids validated as numbers: a bare BaseInFilter passes the
+    # raw strings to the ORM, which fails with a 500 on non-numeric input
+    pass
+
+
 class RegioneFilters(filters.FilterSet):
     code = filters.CharFilter(
         field_name="code",
@@ -35,7 +41,7 @@ class ProvinciaFilters(filters.FilterSet):
         field_name="geographic_partition",
         lookup_expr="icontains",
     )
-    region_id = filters.BaseInFilter(
+    region_id = NumberInFilter(
         field_name="region",
         lookup_expr="in",
     )
@@ -58,7 +64,7 @@ class ComuneFilters(filters.FilterSet):
         field_name="geographic_partition",
         lookup_expr="icontains",
     )
-    province_id = filters.BaseInFilter(
+    province_id = NumberInFilter(
         field_name="province",
         lookup_expr="in",
     )
