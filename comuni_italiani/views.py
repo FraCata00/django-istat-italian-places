@@ -32,7 +32,7 @@ class RegioniAPIView(LengthOfDenominationROMV):
     # - use prefetch_related() for ManyToManyField and reverse ForeignKey
 
     serializer_class = RegioneSerializer
-    queryset = Regione.objects.all()
+    queryset = Regione.objects.prefetch_related("provinces").all()
     search_fields = ["denomination"]
     filterset_class = RegioneFilters
 
@@ -42,11 +42,16 @@ class ProvinciaAPIView(LengthOfDenominationROMV):
     # - use select_related() for ForeignKey and OneToOneField
     # - use prefetch_related() for ManyToManyField and reverse ForeignKey
 
-    queryset = (
-        Provincia.objects.select_related("region").prefetch_related("cities").all()
-    )
+    queryset = Provincia.objects.select_related("region").all()
     search_fields = ["denomination"]
     filterset_class = ProvinciaFilters
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        # only the detail serializer lists the cities
+        if self.action == "retrieve":
+            return queryset.prefetch_related("cities")
+        return queryset
 
     def get_serializer_class(self):
         if self.action == "retrieve":
